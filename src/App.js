@@ -1,23 +1,46 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import { useEffect, useState } from "react";
 
 function App() {
+  const [input, setInput] = useState("");
+  const [text, setText] = useState([]);
+  const [wordNumber, setWordNumber] = useState(1);
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    const wordsArray = input.split(" ");
+    if (wordsArray.length <= 1) {
+      alert("Enter a sentence with more than one word!");
+    } else {
+      setText(wordsArray);
+      setInput("");
+      setWordNumber(1);
+    }
+  };
+
+  useEffect(() => {
+    if (wordNumber < text.length) {
+      const time = setTimeout(() => setWordNumber(wordNumber + 1), 500);
+      return () => clearTimeout(time);
+    }
+  }, [text, wordNumber]);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container">
+      <h1>Enter Your Text</h1>
+      <form onSubmit={onSubmit}>
+        <input
+          type="text"
+          required
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+        />
+      </form>
+      <div className="text-container">
+        {text.slice(0, wordNumber).map((word, index) => (
+          <p key={index}>{word}</p>
+        ))}
+      </div>
     </div>
   );
 }
